@@ -18,7 +18,7 @@ Data science interview questions - with answers
 
 ## Roadmap for a career as a data scientist, data engineer and data analyst
 
-* Roadmaps: [roadmap.md](roadmap.md)
+* Roadmaps for a data engineer: [roadmap.md](roadmap.md)
 
 # Data-Science-Interview-Resources
 
