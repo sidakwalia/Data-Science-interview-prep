@@ -1,3 +1,8 @@
+# Checkout the Data Science algorithm folder for implementation of algorithms in Python
+
+* This folder contains basics of python, all machine learning algorithms and deep learning algorithms with their implementation
+
+
 # Data Science Interviews
 
 Data science interview questions - with answers
