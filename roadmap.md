@@ -2,11 +2,11 @@
 
 * Building a strong base in SQL, Coding and Linux.
 
-[SQL Course]:(https://lnkd.in/dqBTpf7b)
+* [SQL Course]:(https://lnkd.in/dqBTpf7b)
 
-[Linux Course]: (https://lnkd.in/d4upsXJW)
+*[Linux Course]: (https://lnkd.in/d4upsXJW)
 
-[Python Course]:(https://lnkd.in/devZGZrD)
+*[Python Course]:(https://lnkd.in/devZGZrD)
 
 
 * Learn about data warehousing and data pipeline that is ETLs,ELTs and ELs
