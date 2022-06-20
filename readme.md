@@ -16,6 +16,10 @@ Data science interview questions - with answers
 
 * Link for the resources: [datascience.md](datascience.md)
 
+## Roadmap for a career as a data scientist, data engineer and data analyst
+
+* Roadmaps: [roadmap.md](roadmap.md)
+
 # Data-Science-Interview-Resources
 
 First of all, thanks for visiting this repo, congratulations on making a great career choice, I aim to help you land an amazing Data Science job that you have been dreaming for, by sharing my experience, interviewing heavily at both large product-based companies and fast-growing startups, hope you find it useful.
