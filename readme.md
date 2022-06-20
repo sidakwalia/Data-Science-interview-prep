@@ -14,7 +14,7 @@ Data science interview questions - with answers
  
 ## Crack the data scientist interview: 
 
-* Link for the resources[datascience.md](datascience.md)
+* Link for the resources: [datascience.md](datascience.md)
 
 # Data-Science-Interview-Resources
 
