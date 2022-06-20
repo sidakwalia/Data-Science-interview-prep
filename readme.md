@@ -10,7 +10,9 @@ Data science interview questions - with answers
 ## Questions by category
 
 * Theoretical questions: [interview.md](interview.md) (linear models, trees, neural networks and others)
-* Crack the data scientist interview: [datascience.md](datascience.md)
+ 
+ 
+#Crack the data scientist interview: [datascience.md](datascience.md)
 
 
 # Data-Science-Interview-Resources
