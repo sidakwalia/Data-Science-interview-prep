@@ -1,0 +1,116 @@
+import cv2
+import argparse
+import time
+import numpy as np
+from keras.models import load_model
+from django.conf import settings
+import tensorflow as tf
+
+ag_path = settings.MODEL_ROOT + "/age_gen_x.h5"
+eth_path = settings.MODEL_ROOT + "/ethnic.h5"
+emo_path = settings.MODEL_ROOT + "/emotion.h5"
+
+global model_age_gen
+model_age_gen = load_model(ag_path)
+global graph_ag
+graph_ag = tf.get_default_graph()
+
+global model_eth
+model_eth = load_model(eth_path)
+global graph_eth
+graph_eth = tf.get_default_graph()
+
+global model_emo
+model_emo = load_model(emo_path)
+global graph_emo
+graph_emo = tf.get_default_graph()
+
+gender_dict = {0:"F", 1:"M"}
+age_dict = {0:"(0-5)", 1:"(6-12)", 2:"(13-19)", 3:"(20-30)", 4:"(31-45)", 5:"(46-60)", 6:"(60+)"}
+ethnic_dict = {0:"white", 1:"black", 2:"asian", 3:"indian", 4:"others"}
+emotion_dict = {0:"angry", 1:"disgust", 2:"fear", 3:"happy", 4:"sad", 5:"surprise", 6:"neutral"}
+
+modelFile = settings.MODEL_ROOT + "/face_detection.caffemodel"
+configFile = settings.MODEL_ROOT + "/face_detection.prototxt"
+net = cv2.dnn.readNetFromCaffe(configFile, modelFile)
+conf_threshold = 0.7
+
+def game(face_img):
+
+    img = cv2.resize(face_img, (128,128), interpolation=cv2.INTER_AREA)
+    img = img/255.0
+    img = img -0.5
+    img = img*2.0
+    img = img.reshape((1,128,128,3))
+    with graph_ag.as_default():
+        predictions = model_age_gen.predict(img)
+    gender = np.argmax(predictions[0])
+    age = np.argmax(predictions[1])
+    
+
+    img = cv2.resize(face_img, (200,200), interpolation=cv2.INTER_AREA)
+    img = img.reshape((1,200,200,3))
+    with graph_eth.as_default():
+        predictions = model_eth.predict(img)
+    ethnic = np.argmax(predictions)
+
+    img = cv2.resize(face_img, (96,96), interpolation=cv2.INTER_AREA)
+    img = img/255.0
+    img = img -0.5
+    img = img*2.0
+    img = img.reshape((1,96,96,3))
+    with graph_emo.as_default():
+        predictions = model_emo.predict(img)
+    emotion = np.argmax(predictions)
+
+    return age, gender, ethnic, emotion
+
+def game_util(frame):
+    
+    frameOpencvDnn = frame.copy()
+    frameHeight = frameOpencvDnn.shape[0]
+    frameWidth = frameOpencvDnn.shape[1]
+    blob = cv2.dnn.blobFromImage(frameOpencvDnn, 1.0, (300, 300), [104, 117, 123], False, False)
+
+    net.setInput(blob)
+    detections = net.forward()
+    bboxes = []
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > conf_threshold:
+            x1 = int(detections[0, 0, i, 3] * frameWidth)
+            y1 = int(detections[0, 0, i, 4] * frameHeight)
+            x2 = int(detections[0, 0, i, 5] * frameWidth)
+            y2 = int(detections[0, 0, i, 6] * frameHeight)
+
+            margin = 10
+
+            img_h, img_w, _ = frame.shape
+            w = x2-x1
+            h = y2-y1
+            margin = int(min(w,h) * margin / 100)
+            x_a = x1 - margin
+            y_a = y1 - margin
+            x_b = x1 + w + margin
+            y_b = y1 + h + margin
+            if x_a < 0:
+                x_b = min(x_b - x_a, img_w-1)
+                x_a = 0
+            if y_a < 0:
+                y_b = min(y_b - y_a, img_h-1)
+                y_a = 0
+            if x_b > img_w:
+                x_a = max(x_a - (x_b - img_w), 0)
+                x_b = img_w
+            if y_b > img_h:
+                y_a = max(y_a - (y_b - img_h), 0)
+                y_b = img_h
+            
+
+            cropped_face = frame[y_a: y_b, x_a: x_b]
+
+            age, gender, ethnicity, emotion = game(cropped_face)
+
+            bboxes.append({"bbox" : [x1,y1,x2,y2], "gender":gender_dict[gender], "age":age_dict[age],"ethnicity":ethnic_dict[ethnicity],"emotion":emotion_dict[emotion]})
+
+    return bboxes
